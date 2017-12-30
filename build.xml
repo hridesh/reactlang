@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<project name="lang" default="parser">
+
+	<!-- ANTLR version -->
+	<property name="antlr.version" value="4.5" />
+
+	<!-- ReactLang parser -->
+	<target name="reactlang-check-parser">
+		<condition property="reactlang.parser.uptodate">
+			<and>
+				<uptodate srcfile="src/reactlang/ReactLang.g" targetfile="src/reactlang/parser/ReactLangParser.java" />
+				<uptodate srcfile="src/reactlang/ReactLang.g" targetfile="src/reactlang/parser/ReactLangLexer.java" />
+				<uptodate srcfile="src/reactlang/ReactLang.g" targetfile="src/reactlang/parser/ReactLangListener.java" />
+			</and>
+		</condition>
+	</target>
+
+	<target name="reactlang" depends="reactlang-check-parser" unless="reactlang.parser.uptodate">
+		<java jar="lib/antlr-${antlr.version}-complete.jar" dir="src/reactlang/" fork="true" failonerror="true">
+			<arg value="-o" />
+			<arg value="parser/" />
+			<arg value="-no-listener" />
+			<arg value="-package" />
+			<arg value="reactlang.parser; import static reactlang.AST.*" />
+			<arg value="ReactLang.g" />
+		</java>
+	</target>
+
+	<target name="parser" depends="reactlang" >
+	</target>
+	
+</project>
